@@ -1,6 +1,7 @@
 import asyncio
 from itertools import chain
 from typing import Any
+from tqdm.asyncio import tqdm_asyncio
 
 from ultima_scraper_api.apis.api_helper import handle_error_details
 from ultima_scraper_api.managers.session_manager import SessionManager
@@ -32,7 +33,7 @@ class ScrapeManager:
         self.scraped = session_manager.auth.api.ContentTypes()
 
     async def bulk_scrape(self, urls: list[str]):
-        result = await asyncio.gather(
+        result = await tqdm_asyncio.gather(
             *[self.scrape(x) for x in urls], return_exceptions=True
         )
         final_result = list(chain(*result))

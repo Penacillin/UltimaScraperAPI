@@ -9,6 +9,7 @@ import time
 from random import randint
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
+from tqdm.asyncio import tqdm_asyncio
 
 import aiohttp
 import python_socks
@@ -289,7 +290,7 @@ class SessionManager:
                 pass
 
     async def bulk_requests(self, urls: list[str]) -> list[ClientResponse | None]:
-        return await asyncio.gather(*[self.request(url) for url in urls])
+        return await tqdm_asyncio.gather(*[self.request(url) for url in urls])
 
     async def json_request(self, url: str, method: str = "GET"):
         while True:
@@ -308,7 +309,7 @@ class SessionManager:
                 continue
 
     async def bulk_json_requests(self, urls: list[str]) -> list[dict[Any, Any]]:
-        return await asyncio.gather(*[self.json_request(url) for url in urls])
+        return await tqdm_asyncio.gather(*[self.json_request(url) for url in urls])
 
     async def json_request_2(
         self,

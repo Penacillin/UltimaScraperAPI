@@ -16,6 +16,7 @@ from aiofiles import os as async_os
 from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 from mergedeep import Strategy, merge  # type: ignore
+import piexif
 
 import ultima_scraper_api
 import ultima_scraper_api.classes.prepare_webhooks as prepare_webhooks
@@ -117,6 +118,14 @@ async def format_file(filepath: Path, timestamp: float, reformat_media: bool):
                 # print(f"Updated Creation Time {filepath}")
             os.utime(filepath, (timestamp, timestamp))
             # print(f"Updated Modification Time {filepath}")
+            if os.path.splitext(filepath)[1] in ['.jpg', '.jpeg', '.tiff']:
+                exif_dict = piexif.load(filepath)
+                datetime_str = datetime.fromtimestamp(timestamp).strftime("%Y:%m:%d %H:%M:%S")
+                exif_dict['Exif'][piexif.ExifIFD.DateTimeOriginal] = datetime_str
+                exif_dict['Exif'][piexif.ExifIFD.DateTimeDigitized] = datetime_str
+                piexif.remove(filepath)
+                exif_bytes = piexif.dump(exif_dict)
+                piexif.insert(exif_bytes, filepath)
             break
 
 
