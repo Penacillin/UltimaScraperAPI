@@ -1,6 +1,7 @@
 import asyncio
 from itertools import chain
 from typing import Any
+from tqdm.asyncio import tqdm_asyncio
 
 from ultima_scraper_api.apis.api_helper import handle_error_details
 from ultima_scraper_api.managers.session_manager import SessionManager
